@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Admin panel: mini-test</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 10px;
+        margin: 12px 0;
+      }
+      .stat {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .stat b {
+        display: block;
+        font-size: 1.6rem;
+        line-height: 1.1;
+      }
+      .tools {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+      .tools .btn {
+        margin: 0;
+        padding: 8px 14px;
+      }
+      select {
+        font: inherit;
+        color: inherit;
+        background: var(--card);
+        border: 2px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+      }
+      .scroll {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 8px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      .pill {
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .pill.tugadi {
+        background: var(--ok-bg);
+        color: var(--ok);
+      }
+      .pill.bekor {
+        background: var(--bad-bg);
+        color: var(--bad);
+      }
+      .pill.jarayonda {
+        background: var(--seg);
+      }
+      .qrow {
+        margin: 10px 0;
+      }
+      .qrow .t {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 0.9rem;
+      }
+      .qrow .tr {
+        height: 8px;
+        border-radius: 4px;
+        background: var(--seg);
+        overflow: hidden;
+        margin-top: 4px;
+      }
+      .qrow .fl {
+        height: 100%;
+        background: var(--ok);
+      }
+      .qrow.worst .fl {
+        background: var(--bad);
+      }
+      .link {
+        background: none;
+        border: 0;
+        color: var(--accent);
+        font: inherit;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main style="max-width: 900px">
+      <h1>Admin panel</h1>
+      <p class="muted small">
+        Hozircha panel faqat shu qurilmadagi natijalarni ko'rsatadi. Firebase
+        ulangach hamma o'quvchilar natijasi shu yerda ko'rinadi. Kirish himoyasi
+        ham o'shanda qo'shiladi.
+      </p>
+      <div class="stats">
+        <div class="stat"><b id="n-done">0</b>tugatdi</div>
+        <div class="stat"><b id="n-dq">0</b>bekor qilindi</div>
+        <div class="stat"><b id="n-run">0</b>jarayonda</div>
+        <div class="stat"><b id="avg">—</b>o'rtacha ball</div>
+      </div>
+      <div class="card">
+        <h2 style="margin-top: 0">Savollar bo'yicha to'g'ri javoblar</h2>
+        <p class="muted small" id="qnote"></p>
+        <div id="qstats"></div>
+      </div>
+      <div class="tools">
+        <select id="flt" aria-label="Holat bo'yicha filtr">
+          <option value="all">Hammasi</option>
+          <option value="tugadi">Tugatganlar</option>
+          <option value="bekor">Bekor qilinganlar</option>
+          <option value="jarayonda">Jarayonda</option>
+        </select>
+        <button class="btn" id="csv">CSV yuklab olish</button>
+        <button class="btn alt" id="wipe">Hammasini o'chirish</button>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Ism</th>
+              <th>Guruh</th>
+              <th>Holat</th>
+              <th>Ball</th>
+              <th>Vaqt (s)</th>
+              <th>Boshlandi</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </main>
+    <script src="questions.js"></script>
+    <script src="storage.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Ijtimoiy tarmoqlar va axloq: mini-test</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <section id="start">
+        <h1>Ijtimoiy tarmoqlar va axloq: mini-test</h1>
+        <div class="card">
+          <p>
+            15 ta savol, har biriga 45 soniya. Har javobdan keyin to'g'ri javob
+            va izoh chiqadi. Savollar va variantlar aralashtiriladi.
+          </p>
+          <p>
+            <strong>Qoidalar:</strong> test faqat bir marta topshiriladi. Boshqa
+            ilova yoki sahifaga o'tsangiz, yoki sahifani yangilasangiz, test
+            bekor qilinadi va natija 0 bo'ladi.
+          </p>
+          <label for="nm">Ism va familiya</label>
+          <input id="nm" autocomplete="off" maxlength="60" />
+          <label for="gr">Guruh (ixtiyoriy)</label>
+          <input id="gr" autocomplete="off" maxlength="20" />
+          <p class="muted small">
+            Ism-familiyangiz va natijangiz ustoz ko'rishi uchun saqlanadi.
+          </p>
+          <p class="err hidden" id="err" role="alert"></p>
+          <button class="btn" id="go">Testni boshlash</button>
+        </div>
+      </section>
+
+      <section id="quiz" class="hidden" aria-live="polite">
+        <div class="count" id="count"></div>
+        <div class="bar" id="bar" aria-hidden="true"></div>
+        <div class="timer" aria-hidden="true">
+          <div class="track"><div class="fill" id="fill"></div></div>
+          <div class="sec" id="sec">45</div>
+        </div>
+        <div class="rule">
+          Boshqa ilovaga o'tsangiz, test bekor qilinadi va natija 0 bo'ladi.
+        </div>
+        <h2 id="q"></h2>
+        <ul class="opts" id="opts"></ul>
+        <div id="why" class="why hidden"></div>
+        <button class="btn hidden" id="next">Keyingi savol</button>
+      </section>
+
+      <section id="end" class="hidden">
+        <h1>Natijangiz</h1>
+        <div class="card">
+          <p class="muted" id="who"></p>
+          <div class="score" id="score"></div>
+          <p id="msg"></p>
+          <div class="bar" id="bar2" aria-hidden="true"></div>
+          <div id="missed"></div>
+        </div>
+      </section>
+    </main>
+    <script src="questions.js"></script>
+    <script src="storage.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
