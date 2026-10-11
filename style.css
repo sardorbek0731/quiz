@@ -55,6 +55,12 @@ html {
 }
 body {
   margin: 0;
+  min-height: 100vh;
+  min-height: calc(
+    100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+  );
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   color: var(--ink);
   font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -62,6 +68,8 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 main {
+  width: 100%;
+  flex: 1;
   max-width: 560px;
   margin: 0 auto;
   padding: 20px 16px 40px;
@@ -83,6 +91,9 @@ p {
 .muted {
   color: var(--muted);
 }
+.small {
+  font-size: 0.85rem;
+}
 .card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -90,7 +101,7 @@ p {
   padding: 18px;
 }
 
-/* Progress bar: one segment per question */
+/* Progress bar: har savolga bitta bo'lak */
 .bar {
   display: flex;
   gap: 4px;
@@ -102,11 +113,8 @@ p {
   border-radius: 4px;
   background: var(--seg);
 }
-.bar span.ok {
-  background: var(--ok);
-}
-.bar span.bad {
-  background: var(--bad);
+.bar span.done {
+  background: var(--accent);
 }
 .bar span.now {
   outline: 2px solid var(--accent);
@@ -118,7 +126,7 @@ p {
   margin-bottom: 2px;
 }
 
-/* Answer options */
+/* Javob variantlari */
 .opts {
   display: grid;
   gap: 10px;
@@ -162,37 +170,25 @@ p {
 .opt:disabled {
   cursor: default;
 }
-.opt.right {
-  border-color: var(--ok);
-  background: var(--ok-bg);
+/* Tanlangan variant: faqat tanlov belgisi, to'g'ri/noto'g'ri ko'rsatilmaydi */
+.opt.picked {
+  border-color: var(--accent);
 }
-.opt.right .let {
-  background: var(--ok);
-  color: #fff;
-}
-.opt.wrong {
-  border-color: var(--bad);
-  background: var(--bad-bg);
-}
-.opt.wrong .let {
-  background: var(--bad);
-  color: #fff;
+.opt.picked .let {
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
-/* Explanation after answering */
-.why {
+/* Javobdan keyingi qisqa xabar */
+.note {
   margin-top: 14px;
   padding: 12px 14px;
   border-radius: 12px;
   background: var(--bg);
   border-left: 4px solid var(--accent);
 }
-.why strong {
-  display: block;
-  margin-bottom: 2px;
-}
 
-/* Buttons */
+/* Tugmalar */
 .btn {
   display: inline-block;
   font: inherit;
@@ -211,23 +207,15 @@ p {
   border: 2px solid var(--accent);
 }
 
-/* Result screen */
+/* Natija ekrani */
 .score {
   font-size: 3rem;
   font-weight: 800;
   line-height: 1;
   margin: 6px 0;
 }
-.miss {
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
-  margin-top: 12px;
-}
-.miss p {
-  margin: 0 0 6px;
-}
 
-/* Countdown timer */
+/* Taymer */
 .timer {
   display: flex;
   align-items: center;
@@ -261,17 +249,7 @@ p {
   margin: 6px 0 4px;
 }
 
-.hidden {
-  display: none;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .opt {
-    transition:
-      border-color 0.15s,
-      background 0.15s;
-  }
-}
-
+/* Forma */
 label {
   display: block;
   font-weight: 600;
@@ -290,10 +268,48 @@ input:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
-.small {
-  font-size: 0.85rem;
-}
 .err {
   color: var(--bad);
   font-weight: 600;
+}
+
+/* Pastki yozuv */
+.credit {
+  text-align: center;
+  padding: 16px 16px 24px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.credit a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.credit a:hover {
+  text-decoration: underline;
+}
+.credit a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.hidden {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .opt {
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+  }
+}
+
+html,
+body {
+  overscroll-behavior-y: contain;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

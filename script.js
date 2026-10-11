@@ -1,6 +1,7 @@
 const $ = (id) => document.getElementById(id);
 const L = ["A", "B", "C", "D"],
-  TIME = 45;
+  TIME = 45, // bir savolga beriladigan soniya
+  PAUSE = 600; // javobdan keyin keyingi savolga o'tishdan oldingi qisqa pauza (ms)
 let order = [],
   pos = 0,
   score = 0,
@@ -10,10 +11,16 @@ let timer = null,
   deadline = 0,
   qStart = 0,
   active = false,
-  answered = false;
+  answered = false,
+  leaving = false; // sahifa yangilanyapti yoki yopilyapti
 
 const norm = (s) => s.trim().replace(/\s+/g, " ");
-const makeId = (n, g) => (norm(n) + "|" + norm(g)).toLowerCase();
+// Apostrof turlarini birlashtiramiz (O'tkir, O‘tkir, Oʻtkir bir xil bo'ladi)
+const makeId = (n) =>
+  norm(n)
+    .toLowerCase()
+    .replace(/[’‘ʻʼ`´]/g, "'");
+const okName = (s) => /^\p{L}[\p{L}'’‘ʻʼ`´ -]{1,29}$/u.test(s);
 const shuffle = (a) => {
   const x = a.slice();
   for (let k = x.length - 1; k > 0; k--) {
@@ -26,6 +33,8 @@ const show = (id) => {
   ["start", "quiz", "end"].forEach((s) =>
     $(s).classList.toggle("hidden", s !== id),
   );
+  const credit = document.querySelector(".credit");
+  if (credit) credit.classList.toggle("hidden", id === "quiz");
   window.scrollTo(0, 0);
 };
 const getMe = () => {
@@ -42,34 +51,43 @@ const setMe = (id) => {
 };
 const persist = () => Store.save(rec).catch(() => {});
 
-function bar(el, now) {
+// Sahifa aynan "yangilash" bilan ochilganmi? Yopib qayta ochish yoki "orqaga" bilan
+// qaytish yangilash hisoblanmaydi. Brauzer turini aniqlay olmasak, ehtiyot uchun false.
+function isReload() {
+  const n = performance.getEntriesByType("navigation")[0];
+  if (n) return n.type === "reload";
+  return !!performance.navigation && performance.navigation.type === 1;
+}
+
+// Progress bar: faqat javob berilgan/berilmaganini ko'rsatadi, to'g'ri-noto'g'rini emas
+function drawBar() {
+  const el = $("bar");
   el.innerHTML = "";
-  const dq = rec && rec.status === "bekor";
   QS.forEach((_, k) => {
-    const s = document.createElement("span"),
-      a = rec && rec.answers[k];
-    if (dq) s.className = "bad";
-    else if (a) s.className = a.correct ? "ok" : "bad";
-    else if (k === now) s.className = "now";
+    const s = document.createElement("span");
+    if (k < pos || (k === pos && answered)) s.className = "done";
+    else if (k === pos) s.className = "now";
     el.appendChild(s);
   });
 }
 
-// Sahifa ochilganda: bu qurilmada urinish bo'lsa, qayta boshlab bo'lmaydi
+// Sahifa ochilganda: tugagan urinish bo'lsa natija ko'rsatiladi.
+// Tugamagan bo'lsa: sahifa yangilangan bo'lsa test to'xtagan joyidan davom etadi,
+// sahifadan chiqib qayta kirilgan bo'lsa test bekor qilinadi.
 async function init() {
   const id = getMe();
   if (id) {
     const r = await Store.get(id);
     if (r) {
+      rec = r;
       if (r.status === "jarayonda") {
-        // yangilangan yoki yopilgan
+        if (Array.isArray(r.order) && isReload()) return resume();
         r.status = "bekor";
-        r.reason = "sahifa yangilandi yoki yopildi";
+        r.reason = "sahifadan chiqib, qayta kirdingiz";
         r.score = 0;
         r.finishedAt = Date.now();
         await Store.save(r);
       }
-      rec = r;
       showEnd();
       return;
     }
@@ -80,6 +98,7 @@ async function init() {
 async function begin() {
   const btn = $("go"),
     err = $("err");
+  if (btn.disabled) return; // Enter ikki marta bosilsa, test ikki marta boshlanmasin
   const fail = (m) => {
     err.textContent = m;
     err.classList.remove("hidden");
@@ -87,19 +106,21 @@ async function begin() {
   };
   btn.disabled = true;
   err.classList.add("hidden");
-  const n = norm($("nm").value),
-    g = norm($("gr").value);
-  if (n.length < 5 || n.split(" ").length < 2)
-    return fail("Ism va familiyangizni to'liq yozing.");
-  const id = makeId(n, g);
+  const fn = norm($("fn").value),
+    ln = norm($("ln").value);
+  if (!okName(fn) || !okName(ln))
+    return fail(
+      "Ism va familiyani alohida yozing: faqat harflar, kamida 2 ta harf.",
+    );
+  const n = fn + " " + ln;
+  const id = makeId(n);
   if (await Store.get(id))
     return fail(
-      "Bu ism va guruh bilan test topshirilgan. Xato bo'lsa, ustozga murojaat qiling.",
+      "Bu ism va familiya bilan test topshirilgan. Xato bo'lsa, ustozga murojaat qiling.",
     );
   rec = {
     id,
     name: n,
-    group: g,
     status: "jarayonda",
     score: 0,
     total: QS.length,
@@ -124,15 +145,31 @@ async function begin() {
   render();
 }
 
-function render() {
+// Sahifa yangilangandan keyin testni to'xtagan joyidan davom ettirish.
+// Taymer yangilash bilan nolga tushmaydi: tugash vaqti saqlangan.
+function resume() {
+  order = rec.order;
+  pos = rec.pos;
+  score = rec.score;
+  active = true;
+  show("quiz");
+  if (rec.answers[pos]) {
+    pos++; // bu savolga javob berilgan, keyingisiga o'tamiz
+    render();
+  } else {
+    render(rec.deadline); // vaqti o'tib ketgan bo'lsa, savol "vaqt tugadi" bo'ladi
+  }
+}
+
+// dl: davom ettirilayotgan savolning saqlangan tugash vaqti
+function render(dl) {
   const d = QS[order[pos]];
   cur = shuffle(d.o.map((t, k) => ({ t, ok: k === d.a })));
   answered = false;
   $("count").textContent = "Savol " + (pos + 1) + " / " + QS.length;
-  bar($("bar"), pos);
+  drawBar();
   $("q").textContent = d.q;
-  $("why").classList.add("hidden");
-  $("next").classList.add("hidden");
+  $("note").classList.add("hidden");
   const ul = $("opts");
   ul.innerHTML = "";
   cur.forEach((c, k) => {
@@ -146,45 +183,49 @@ function render() {
     li.appendChild(b);
     ul.appendChild(li);
   });
+  deadline = dl || Date.now() + TIME * 1000;
+  rec.order = order;
+  rec.pos = pos;
+  rec.deadline = deadline;
+  persist();
   startTimer();
 }
 
+// k = tanlangan variant; k = -1: vaqt tugadi. To'g'ri javob hech qachon ko'rsatilmaydi.
 function answer(k) {
-  // k = -1: vaqt tugadi
   if (!active || answered) return;
   answered = true;
   stopTimer();
-  const qi = order[pos],
-    d = QS[qi],
-    good = k >= 0 && cur[k].ok;
+  const good = k >= 0 && cur[k].ok;
   if (good) score++;
   rec.answers[pos] = {
-    q: qi,
-    picked: k >= 0 ? cur[k].t : null,
+    q: order[pos],
     correct: good,
     ms: Date.now() - qStart,
   };
   rec.score = score;
+  // Oxirgi savol: darrov yakunlanadi, natija ko'rsatilguncha kutilmaydi
+  if (pos === QS.length - 1) return finish();
   persist();
-  [...$("opts").querySelectorAll(".opt")].forEach((b, n) => {
-    b.disabled = true;
-    if (cur[n].ok) b.classList.add("right");
-    else if (n === k) b.classList.add("wrong");
-  });
-  bar($("bar"), -1);
-  const w = $("why");
-  w.innerHTML = "<strong></strong><span></span>";
-  w.firstChild.textContent = good
-    ? "To'g'ri!"
-    : k < 0
-      ? "Vaqt tugadi."
-      : "Noto'g'ri.";
-  w.lastChild.textContent = d.w;
-  w.classList.remove("hidden");
-  const n = $("next");
-  n.textContent = pos === QS.length - 1 ? "Natijani ko'rish" : "Keyingi savol";
-  n.classList.remove("hidden");
-  n.focus();
+  $("opts")
+    .querySelectorAll(".opt")
+    .forEach((b, i) => {
+      b.disabled = true;
+      b.classList.toggle("picked", i === k);
+    });
+  drawBar();
+  if (k < 0) {
+    const note = $("note");
+    note.textContent = "Vaqt tugadi.";
+    note.classList.remove("hidden");
+  }
+  setTimeout(next, PAUSE);
+}
+
+function next() {
+  if (!active) return; // pauza paytida test bekor bo'lgan bo'lishi mumkin
+  pos++;
+  render();
 }
 
 function finish() {
@@ -192,7 +233,6 @@ function finish() {
   stopTimer();
   rec.status = "tugadi";
   rec.finishedAt = Date.now();
-  rec.score = score;
   persist();
   showEnd();
 }
@@ -209,14 +249,13 @@ function disqualify() {
   showEnd();
 }
 
+// Faqat yakuniy ball. Savollar va to'g'ri javoblar ko'rsatilmaydi.
 function showEnd() {
   show("end");
-  active = false;
-  stopTimer();
   const dq = rec.status === "bekor",
     sc = dq ? 0 : rec.score,
     r = sc / rec.total;
-  $("who").textContent = rec.name + (rec.group ? " (" + rec.group + ")" : "");
+  $("who").textContent = rec.name;
   $("score").textContent = sc + " / " + rec.total;
   $("msg").textContent = dq
     ? "Test bekor qilindi: " + rec.reason + ". Qoidaga ko'ra natija 0."
@@ -225,31 +264,6 @@ function showEnd() {
       : r >= 0.6
         ? "Yaxshi natija."
         : "Mavzuni yana bir bor ko'rib chiqing.";
-  bar($("bar2"), -1);
-  const m = $("missed");
-  m.innerHTML = "";
-  const wrong = dq ? [] : rec.answers.filter((a) => a && !a.correct);
-  if (wrong.length) {
-    const h = document.createElement("p");
-    h.className = "muted";
-    h.textContent = "Xato javob bergan savollaringiz:";
-    m.appendChild(h);
-    wrong.forEach((a) => {
-      const d = QS[a.q],
-        div = document.createElement("div");
-      div.className = "miss";
-      const p1 = document.createElement("p"),
-        p2 = document.createElement("p"),
-        p3 = document.createElement("p");
-      p1.innerHTML = "<strong></strong>";
-      p1.firstChild.textContent = d.q;
-      p2.textContent =
-        "Sizning javobingiz: " + (a.picked || "javob berilmagan (vaqt tugadi)");
-      p3.textContent = "To'g'ri javob: " + d.o[d.a];
-      div.append(p1, p2, p3);
-      m.appendChild(div);
-    });
-  }
 }
 
 function stopTimer() {
@@ -272,23 +286,34 @@ function tick() {
 }
 function startTimer() {
   stopTimer();
-  qStart = Date.now();
-  deadline = qStart + TIME * 1000;
+  qStart = deadline - TIME * 1000;
   tick();
   timer = setInterval(tick, 200);
 }
 
 $("go").addEventListener("click", begin);
-$("nm").addEventListener("keydown", (e) => {
+$("fn").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    $("ln").focus();
+  }
+});
+$("ln").addEventListener("keydown", (e) => {
   if (e.key === "Enter") begin();
 });
-$("next").addEventListener("click", () => {
-  if (pos < QS.length - 1) {
-    pos++;
-    render();
-  } else finish();
+
+// Boshqa ilovaga o'tish test bekor qiladi, lekin sahifani yangilash yoki yopish emas:
+// yangilashda brauzer ham "yashirin" hodisasini yuboradi, shuning uchun avval
+// pagehide belgisi tekshiriladi (pagehide faqat sahifa haqiqatan yopilganda ishlaydi).
+window.addEventListener("pagehide", () => (leaving = true));
+window.addEventListener("pageshow", (e) => {
+  leaving = false;
+  if (e.persisted) disqualify(); // boshqa sahifaga o'tib, "orqaga" bilan qaytgan
 });
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) disqualify();
+  if (document.hidden)
+    setTimeout(() => {
+      if (!leaving) disqualify();
+    }, 0);
 });
 init();

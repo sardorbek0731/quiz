@@ -15,21 +15,33 @@
         <h1>Ijtimoiy tarmoqlar va axloq: mini-test</h1>
         <div class="card">
           <p>
-            15 ta savol, har biriga 45 soniya. Har javobdan keyin to'g'ri javob
-            va izoh chiqadi. Savollar va variantlar aralashtiriladi.
+            15 ta savol, har biriga 45 soniya. To'g'ri javoblar test davomida
+            ko'rsatilmaydi, natija test oxirida chiqadi. Savollar va variantlar
+            aralashtiriladi.
           </p>
           <p>
             <strong>Qoidalar:</strong> test faqat bir marta topshiriladi. Boshqa
-            ilova yoki sahifaga o'tsangiz, yoki sahifani yangilasangiz, test
-            bekor qilinadi va natija 0 bo'ladi.
+            ilova yoki sahifaga o'tsangiz, test bekor qilinadi va natija 0
+            bo'ladi.
           </p>
-          <label for="nm">Ism va familiya</label>
-          <input id="nm" autocomplete="off" maxlength="60" />
-          <label for="gr">Guruh (ixtiyoriy)</label>
-          <input id="gr" autocomplete="off" maxlength="20" />
-          <p class="muted small">
-            Ism-familiyangiz va natijangiz ustoz ko'rishi uchun saqlanadi.
-          </p>
+          <label for="fn">Ism</label>
+          <input
+            id="fn"
+            autocomplete="given-name"
+            autocapitalize="words"
+            spellcheck="false"
+            maxlength="30"
+            enterkeyhint="next"
+          />
+          <label for="ln">Familiya</label>
+          <input
+            id="ln"
+            autocomplete="family-name"
+            autocapitalize="words"
+            spellcheck="false"
+            maxlength="30"
+            enterkeyhint="go"
+          />
           <p class="err hidden" id="err" role="alert"></p>
           <button class="btn" id="go">Testni boshlash</button>
         </div>
@@ -47,8 +59,7 @@
         </div>
         <h2 id="q"></h2>
         <ul class="opts" id="opts"></ul>
-        <div id="why" class="why hidden"></div>
-        <button class="btn hidden" id="next">Keyingi savol</button>
+        <p class="note hidden" id="note"></p>
       </section>
 
       <section id="end" class="hidden">
@@ -57,11 +68,18 @@
           <p class="muted" id="who"></p>
           <div class="score" id="score"></div>
           <p id="msg"></p>
-          <div class="bar" id="bar2" aria-hidden="true"></div>
-          <div id="missed"></div>
         </div>
       </section>
     </main>
+    <footer class="credit">
+      Created by
+      <a
+        href="https://t.me/Sardorbek0limov"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Sardorbek Olimov</a
+      >
+    </footer>
     <script src="questions.js"></script>
     <script src="storage.js"></script>
     <script src="script.js"></script>
