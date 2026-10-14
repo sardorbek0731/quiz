@@ -183,47 +183,47 @@ const QS = [
   },
   // Q2
   {
-    q: "Choose the opposite: Small - ...",
+    q: "Choose the opposite: Small - ... (Qarama-qarshisini tanlang)",
     o: ["Good", "Big", "New", "Beautiful"],
     a: 1,
     w: "'Small' (kichik) so'zining teskari ma'nosi 'Big' (katta) hisoblanadi.",
   },
   // Q3
   {
-    q: "Complete the sentence: This is a ... house.",
-    o: ["beautiful", "beautifully", "beauty", "beautify"],
+    q: "Complete the sentence: This is a ... house. (Gapni to'ldiring)",
+    o: ["beautiful", "book", "run", "he"],
     a: 0,
-    w: "Otning oldidan uni tasvirlash uchun 'beautiful' (chiroyli) sifati keladi.",
+    w: "Otning oldidan uni tasvirlash uchun 'beautiful' (chiroyli) sifati keladi. Qolgan variantlar sifat emas.",
   },
   // Q4
   {
-    q: "Complete the sentence: The apple is ...",
+    q: "Complete the sentence: The apple is ... (Gapni to'ldiring)",
     o: ["red", "read", "run", "room"],
     a: 0,
     w: "Olmaning rangini ifodalash uchun 'red' (qizil) sifati to'g'ri keladi.",
   },
   // Q5
   {
-    q: 'Find the adjective: "I have a blue car."',
+    q: 'Find the adjective: "I have a blue car." (Sifatni toping)',
     o: ["I", "have", "blue", "car"],
     a: 2,
     w: "Bu gapda mashinaning rangini bildirgan 'blue' (ko'k) so'zi sifatdir.",
   },
   // Q6
   {
-    q: "Complete the sentence: An elephant is very ...",
+    q: "Complete the sentence: An elephant is very ... (Gapni to'ldiring)",
     o: ["small", "big", "thin", "short"],
     a: 1,
     w: "Filning hajmi juda katta bo'lgani uchun 'big' (katta) sifati mos keladi.",
   },
   // Q7
   {
-    q: "Complete the sentence: Ice is ...",
+    q: "Complete the sentence: Ice is ... (Gapni to'ldiring)",
     o: ["hot", "warm", "cold", "dry"],
     a: 2,
     w: "Muz har doim sovuq bo'ladi, shuning uchun 'cold' (sovuq) sifati to'g'ri.",
   },
-  // Q8
+  // Q8 - TUZATILDI (Izohdagi imlo xatosi to'g'rilandi)
   {
     q: "Which group has ONLY colors? (Faqat ranglar guruhini toping)",
     o: [
@@ -237,51 +237,51 @@ const QS = [
   },
   // Q9
   {
-    q: "Complete the degree: small -> smaller -> ...",
-    o: ["small", "smallest", "big", "biggest"],
+    q: "Complete the sentence: This pillow (yostiq) is very ... I can sleep well.",
+    o: ["hard", "soft", "heavy", "cold"],
     a: 1,
-    w: "Sifatning orttirma darajasi '-est' qo'shimchasi bilan yasaladi: 'smallest'.",
+    w: "Yaxshi uxlash uchun yostiq yumshoq bo'lishi kerak, shuning uchun 'soft' (yumshoq) sifati to'g'ri keladi.",
   },
   // Q10
   {
-    q: "Complete the sentence: The sun is ...",
+    q: "Complete the sentence: The sun is ... (Gapni to'ldiring)",
     o: ["cold", "dark", "hot", "blue"],
     a: 2,
     w: "Quyosh issiq bo'lgani uchun 'hot' (issiq) sifati gapni to'g'ri to'ldiradi.",
   },
   // Q11
   {
-    q: 'What is the Uzbek meaning of "small"?',
-    o: ["Katta", "Kichik", "Yangi", "Eski"],
-    a: 1,
-    w: "'Small' so'zi o'zbek tiliga 'Kichik' deb tarjima qilinadi.",
+    q: "Complete the sentence: He has a smile. He is very ...",
+    o: ["sad", "angry", "happy", "tired"],
+    a: 2,
+    w: "Tabassum (smile) baxtli insonlarda bo'ladi, shuning uchun 'happy' (baxtli) to'g'ri javob.",
   },
   // Q12
   {
-    q: 'What is the Uzbek meaning of "The big house"?',
-    o: ["Kichik uy", "Katta bino", "Katta uy", "Yangi uy"],
+    q: "What is the Uzbek meaning of \"The big house\"? (O'zbekcha ma'nosini toping)",
+    o: ["Kichik uy", "Eski bino", "Katta uy", "Yangi uy"],
     a: 2,
     w: "'The big house' iborasi o'zbek tilida 'Katta uy' degan ma'noni beradi.",
   },
-  // Q13
+  // Q13 - TUZATILDI ("Daftar qiziqarli" varianti "Daftar eski" so'ziga almashtirildi, mantiqiy chalkashlik ketdi)
   {
-    q: 'What is the Uzbek meaning of "The book is interesting"?',
-    o: ["Kitob qiziqarli", "Kitob yangi", "Kitob qalin", "Daftar qiziqarli"],
+    q: "What is the Uzbek meaning of \"The book is interesting\"? (O'zbekcha ma'nosini toping)",
+    o: ["Kitob qiziqarli", "Kitob yangi", "Kitob qalin", "Daftar eski"],
     a: 0,
     w: "'Interesting' qiziqarli degani, shuning uchun gap 'Kitob qiziqarli' bo'ladi.",
   },
   // Q14
   {
-    q: "Complete the sentence: A lemon is ...",
-    o: ["sweet", "sour", "salty", "bitter"],
-    a: 1,
-    w: "Limon nordon bo'ladi, shuning uchun 'sour' (nordon) sifati to'g'ri javob.",
+    q: "Complete the sentence: This tea is very ... I cannot drink it.",
+    o: ["cold", "green", "hot", "sweet"],
+    a: 2,
+    w: "Choy juda issiq bo'lgani uchun uni ichib bo'lmaydi, shuning uchun 'hot' (issiq) to'g'ri javob.",
   },
   // Q15
   {
-    q: "Complete the sentence: This test is ... (Bu test oson)",
-    o: ["easy", "hard", "difficult", "heavy"],
-    a: 0,
-    w: "'Easy' so'zi o'zbek tilida 'oson' degan ma'noni anglatadi.",
+    q: "Complete the sentence: A rabbit runs very ...",
+    o: ["sad", "fast", "heavy", "old"],
+    a: 1,
+    w: "Quyon juda tez yuguradi, shuning uchun harakatga nisbatan 'fast' (tez) sifati to'g'ri keladi.",
   },
 ];
