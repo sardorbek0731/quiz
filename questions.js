@@ -1,287 +1,194 @@
 // Savollar: q = savol, o = variantlar, a = to'g'ri javob raqami (0 dan boshlanadi), w = izoh
 // Variantlar test vaqtida har safar aralashtiriladi, shuning uchun `a` ning qiymati javob harfiga ta'sir qilmaydi.
-// const QS = [
-//   // Q1
-//   {
-//     q: "DataReportal ma'lumotiga ko'ra, 2025-yil oxirida O'zbekiston aholisining necha foizi internetdan foydalangan?",
-//     o: ["59%", "74%", "89%", "97%"],
-//     a: 2,
-//     w: "33,1 million kishi, ya'ni aholining 89,0 foizi (DataReportal, Digital 2026: Uzbekistan).",
-//   },
-//   // Q2
-//   {
-//     q: "DataReportal ma'lumotiga ko'ra, 2025-yil oktabrida O'zbekistonda 14,1 million ijtimoiy tarmoq profili qayd etilgan. Bu raqam haqida qaysi gap to'g'ri?",
-//     o: [
-//       "Bu aniq odamlar soni, chunki har bir odamda bitta profil bor",
-//       "Bu profillar soni, bir odamda bir nechta profil bo'lishi mumkin",
-//       "Bu Telegram'dagi faol foydalanuvchilar soni, boshqa tarmoqlar hisobga olinmagan",
-//       "Bu talabalar va o'quvchilar soni, kattalar hisobga olinmagan",
-//     ],
-//     a: 1,
-//     w: "Bu profillar soni (taxminiy reklama qamrovi). Bir odamda bir nechta profil bo'lishi mumkin, shuning uchun uni aniq odamlar soni deb bo'lmaydi.",
-//   },
-//   // Q3
-//   {
-//     q: "UNESCO ta'rifiga ko'ra, madaniyat qaysi javobda eng to'liq ifodalangan?",
-//     o: [
-//       "Madaniyat — bu san'at, adabiyot va musiqa, ya'ni ijodiy sohalar majmuasi",
-//       "Madaniyat — bu xalqning bayramlari, urf-odatlari va marosimlari majmuasi",
-//       "Madaniyat — bu san'at, hayot tarzi, qadriyatlar va e'tiqodlar majmuasi",
-//       "Madaniyat — bu xalqning tili, dini va tarixiy yodgorliklari majmuasi",
-//     ],
-//     a: 2,
-//     w: "UNESCO (Mexiko deklaratsiyasi, 1982): madaniyat san'at va adabiyotdan tashqari hayot tarzi, qadriyatlar, an'ana va e'tiqodlarni ham o'z ichiga oladi.",
-//   },
-//   // Q4
-//   {
-//     q: "Ijtimoiy tarmoqqa qaramlik va talabalar o'zlashtirishi haqidagi 2025-yilgi meta-tahlil nimani topgan?",
-//     o: [
-//       "Kuchli ijobiy bog'liqlik (r ≈ +0,70)",
-//       "Kichik salbiy bog'liqlik (r ≈ −0,17)",
-//       "Kuchli salbiy bog'liqlik (r ≈ −0,70)",
-//       "Hech qanday bog'liqlik topilmagan (r ≈ 0)",
-//     ],
-//     a: 1,
-//     w: "Korrelyatsiya −0,172. Bu qaramlik haqida, odatiy foydalanish haqida emas, va u sababiyatni isbotlamaydi.",
-//   },
-//   // Q5
-//   {
-//     q: "UNICEF ta'rifiga ko'ra, kiberbulling qaysi javobda to'g'ri tasvirlangan?",
-//     o: [
-//       "Yuzma-yuz sodir bo'ladigan, raqamli texnologiyalarsiz davom etadigan takroriy xatti-harakat",
-//       "Qurbonni qo'rqitish yoki sharmanda qilishga qaratilgan takroriy raqamli xatti-harakat",
-//       "Raqamli texnologiyalar orqali aytilgan, hech kimni xafa qilish niyati bo'lmagan bir martalik hazil",
-//       "Internetdan boshqa odamning rasmini yoki matnini olib, o'zinikidek ko'rsatish",
-//     ],
-//     a: 1,
-//     w: "UNICEF: kiberbulling raqamli texnologiyalar yordamidagi takrorlanuvchi bulling bo'lib, qurbonni qo'rqitish, g'azablantirish yoki sharmanda qilishga qaratilgan.",
-//   },
-//   // Q6
-//   {
-//     q: "Kiberbullingga duch kelsangiz, UNICEF qaysi maslahatni beradi?",
-//     o: [
-//       "Hammasini o'chirib tashlab, hech kimga aytmasdan jim o'tirib qolish",
-//       "Ishonchli kishiga aytish, bloklash, shikoyat qilish va skrinshot saqlash",
-//       "Javoban xuddi shunday haqoratli xabarlar yuborib, o'ch olish",
-//       "Barcha ijtimoiy tarmoqlardan butunlay voz kechib, hech qachon qaytib kirmaslik",
-//     ],
-//     a: 1,
-//     w: "Kiberbulling raqamli iz qoldiradi va dalil bo'lishi mumkin. Birinchi qadam: ishonchli kishidan yordam so'rash.",
-//   },
-//   // Q7
-//   {
-//     q: "MIT tadqiqotiga ko'ra, yolg'on xabarlarni haqiqiy xabarlardan ko'proq kim tarqatgan?",
-//     o: [
-//       "Avtomatik dasturlar, ya'ni botlar",
-//       "Oddiy foydalanuvchilar, ya'ni odamlar",
-//       "Mustaqil faktchek tashkilotlari",
-//       "Ommaviy axborot vositalarining o'zi",
-//     ],
-//     a: 1,
-//     w: "Botlar olib tashlanganda ham farq saqlanib qolgan: yolg'onni asosan odamlar tarqatadi. Tadqiqotchilar buni yangilik gipotezasi bilan tushuntiradi: yolg'on yangiroq tuyuladi, yangilik esa ko'proq ulashiladi.",
-//   },
-//   // Q8
-//   {
-//     q: "Virginia Shea'ning netiketdagi birinchi qoidasi qaysi?",
-//     o: [
-//       "Diqqatni tortish uchun gaplarni katta harflarda yozing",
-//       "Insonni unutmang: yuziga aytmaydigan gapni yozmang",
-//       "Muloqotda tezlik muhim, shuning uchun darrov javob bering",
-//       "Boshqalarning rasmi va ma'lumotlarini ruxsatsiz ulashing",
-//     ],
-//     a: 1,
-//     w: "Ekran ortida his-tuyg'ulari bor haqiqiy odam o'qiydi (Shea, Netiquette, 1994).",
-//   },
-//   // Q9
-//   {
-//     q: "MIT tadqiqoti qaysi ijtimoiy tarmoqda o'tkazilgan?",
-//     o: ["Telegram", "Instagram", "Twitter (hozirgi X)", "TikTok"],
-//     a: 2,
-//     w: "Tadqiqot Twitter'da (hozirgi X), faktchek qilingan xabarlar bilan o'tkazilgan, shuning uchun natijani boshqa tarmoqlarga to'g'ridan-to'g'ri umumlashtirib bo'lmaydi.",
-//   },
-//   // Q10
-//   {
-//     q: "2024-yilda imzolangan bolalarni zo'ravonlikdan himoya qilish qonuni haqida qaysi gap to'g'ri?",
-//     o: [
-//       "U oiladagi zo'ravonlikni tartibga soladi, maktab va internetdagi zo'ravonlikni esa qamramaydi",
-//       "U faqat jismoniy zo'ravonlikni tan oladi, onlayn zo'ravonlikni esa e'tirof etmaydi",
-//       "U kiberbullingni ham bolalarga nisbatan zo'ravonlik shakli deb e'tirof etadi",
-//       "U hamma yoshdagi shaxslar uchun kiberbullingni taqiqlaydi",
-//     ],
-//     a: 2,
-//     w: "Qonun zo'ravonlik shakllarini oltitaga kengaytirgan va bullingni, shu jumladan kiberbullingni, o'z ichiga olgan. U bolalar, ya'ni 18 yoshgacha bo'lganlar uchun.",
-//   },
-//   // Q11
-//   {
-//     q: "Avstraliya universitetlaridagi 25 ta maqolani tahlil qilgan 2026-yilgi sharhga ko'ra, talabalar ijtimoiy tarmoqdan o'qishda nima uchun foydalanadi?",
-//     o: [
-//       "Guruh ishini boshqarish, resurslarga kirish va tengdoshlar bilan aloqa uchun",
-//       "Imtihon savollarining javoblarini o'zaro almashish va ko'chirish uchun",
-//       "O'qituvchilar bilan rasmiy yozishmalar va hujjat almashinuvi uchun",
-//       "O'quv dasturlari va baholarni rasmiy tarzda e'lon qilish uchun",
-//     ],
-//     a: 0,
-//     w: "Sharh ijtimoiy tarmoq talabalar va o'qituvchilar o'rtasida muloqot, hamkorlik va faollikni oshirishini ko'rsatadi, ayniqsa onlayn va xalqaro talabalarga foyda beradi. Bu Avstraliya misoli.",
-//   },
-//   // Q12
-//   {
-//     q: "2025-yilgi ilmiy sharhga ko'ra, talabalar ruhiy salomatligiga salbiy ta'sirning muhim omillari sifatida qaysilar doimiy chiqqan?",
-//     o: [
-//       "FoMO, uyqu sifati va uzoq foydalanish",
-//       "Tarmoqdagi do'stlar soni va profil rasmi",
-//       "Telefon markasi va ekran o'lchami",
-//       "O'qish yo'nalishi va guruh raqami",
-//     ],
-//     a: 0,
-//     w: "FoMO biror narsani o'tkazib yuborish qo'rquvi degani. Sharh bu omillarni ruhiy qiyinchiliklar bilan bog'liq deb topgan, sabab-oqibat isbotlanmagan.",
-//   },
-//   // Q13
-//   {
-//     q: "Toshkent davlat texnika universiteti mualliflari maqolasining xulosasini qaysi javob to'liqroq ifodalaydi?",
-//     o: [
-//       "Ijtimoiy tarmoqlar yozma nutqni boyitishi va savodxonlikni oshirishi mumkin, salbiy ta'siri esa kuzatilmaydi",
-//       "Ijtimoiy tarmoqlar savodxonlikni pasaytirishi va rasmiy yozuvni susaytirishi mumkin, ijobiy ta'siri esa kuzatilmaydi",
-//       "Ijtimoiy tarmoqlar ijodkorlikni rivojlantirishi ham, rasmiy yozuvni susaytirishi ham mumkin",
-//       "Ijtimoiy tarmoqlar yozma nutqqa ta'sir qilmasligi mumkin, chunki til asosan maktabda shakllanadi",
-//     ],
-//     a: 2,
-//     w: "Maqola yangi so'rov o'tkazmagan, mavjud adabiyotlarni tahlil qilgan. Mualliflar ikki tomonlama ta'sirni ko'rsatadi.",
-//   },
-//   // Q14
-//   {
-//     q: "2019-yilda qabul qilingan 'Shaxsiy ma'lumotlar to'g'risida'gi qonunning asosiy talablaridan biri qaysi?",
-//     o: [
-//       "Ma'lumotni qayta ishlashda egasining roziligi",
-//       "Ma'lumotlarni hamma uchun ochiq e'lon qilish",
-//       "Ma'lumotlarni cheksiz muddat saqlab turish",
-//       "Ma'lumot egasini qayta ishlashdan xabardor qilmaslik",
-//     ],
-//     a: 0,
-//     w: "Qonun ma'lumot egasining roziligi, qayta ishlash maqsadlari va uchinchi shaxsga berishda xabardor qilish talablarini belgilaydi.",
-//   },
-//   // Q15
-//   {
-//     q: "Shea'ning netiketdagi ikkinchi qoidasiga ko'ra, onlayn qanday harakat qilish kerak?",
-//     o: [
-//       "Onlayn qoidalar hayotdagidan farq qiladi, shuning uchun hammasi mumkin",
-//       "Hayotdagi me'yorlarga amal qilish: axloqli bo'lish va qonunni buzmaslik",
-//       "Haqiqiy ismni yashirib, anonim akkaunt orqali fikr bildirish",
-//       "Boshqalarning gapini nusxalab, o'zinikidek qilib ulashish",
-//     ],
-//     a: 1,
-//     w: "Shea: onlayn ham hayotdagi xulq-atvor me'yorlariga amal qiling, axloqli bo'ling, qonunni buzmang va iqtiboslarga manba ko'rsating.",
-//   },
-// ];
-
 const QS = [
+  // ===== 1-QISM: Ta'sir =====
   // Q1
   {
-    q: "Which word is an adjective? (Qaysi biri sifat?)",
-    o: ["Run", "Book", "Big", "He"],
+    q: "DataReportal ma'lumotiga ko'ra, 2025-yil oxirida O'zbekiston aholisining necha foizi internetdan foydalangan?",
+    o: ["59,0%", "74,5%", "89,0%", "97,0%"],
     a: 2,
-    w: "'Big' (katta) so'zi narsalarning belgisini bildiradi va sifat hisoblanadi.",
+    w: "33,1 million kishi, ya'ni aholining 89,0 foizi (DataReportal, Digital 2026: Uzbekistan).",
   },
   // Q2
   {
-    q: "Choose the opposite: Small - ... (Qarama-qarshisini tanlang)",
-    o: ["Good", "Big", "New", "Beautiful"],
+    q: "DataReportal ma'lumotiga ko'ra, 2025-yil oktabrida O'zbekistonda 14,1 million ijtimoiy tarmoq foydalanuvchi profili qayd etilgan. Bu raqamni qanday to'g'ri talqin qilish kerak?",
+    o: [
+      "O'zbekistondagi aniq, takrorlanmaydigan odamlar soni, chunki har bir kishi faqat bitta tarmoqdan foydalanadi",
+      "Taxminiy ko'rsatkich: u noyob odamlar sonini ko'rsatmasligi mumkin",
+      "Faqat Telegram'dagi faol foydalanuvchilar soni, chunki boshqa tarmoqlar hisobga olinmagan",
+      "Faqat 18 yoshgacha bo'lgan talabalar va o'quvchilar soni, kattalar hisobga olinmagan",
+    ],
     a: 1,
-    w: "'Small' (kichik) so'zining teskari ma'nosi 'Big' (katta) hisoblanadi.",
+    w: "DataReportal o'zi ta'kidlaydi: bu raqamlar noyob shaxslar sonini ko'rsatmasligi mumkin. Telegram bu hisobotda yo'q, 18 yoshdan oshganlar uchun esa alohida ko'rsatkich (53,7%) berilgan.",
   },
   // Q3
   {
-    q: "Complete the sentence: This is a ... house. (Gapni to'ldiring)",
-    o: ["beautiful", "book", "run", "he"],
-    a: 0,
-    w: "Otning oldidan uni tasvirlash uchun 'beautiful' (chiroyli) sifati keladi. Qolgan variantlar sifat emas.",
+    q: "UNESCO'ning 1982-yilgi Mexiko deklaratsiyasiga ko'ra, madaniyat qaysi javobda eng to'g'ri ifodalangan?",
+    o: [
+      "Madaniyat — san'at, adabiyot, musiqa va teatr kabi ijodiy sohalar hamda ularning mahsulotlari majmui",
+      "Madaniyat — xalqning bayramlari, urf-odatlari, marosimlari va milliy taomlari majmui, boshqa hech narsa emas",
+      "Madaniyat — xalqning tili, dini va tarixiy yodgorliklari majmui, hayot tarzi va qadriyatlar unga kirmaydi",
+      "Madaniyat — san'atdan tashqari hayot tarzi, qadriyatlar, an'ana va e'tiqodlarni ham qamragan majmui",
+    ],
+    a: 3,
+    w: "UNESCO: madaniyat jamiyat yoki ijtimoiy guruhni xarakterlaydigan ma'naviy, moddiy, intellektual va hissiy xususiyatlar majmui. Unga san'at va adabiyot bilan birga hayot tarzi, inson huquqlari, qadriyatlar, an'analar va e'tiqodlar ham kiradi.",
   },
   // Q4
   {
-    q: "Complete the sentence: The apple is ... (Gapni to'ldiring)",
-    o: ["red", "read", "run", "room"],
+    q: "Toshkent davlat texnika universiteti mualliflarining 2025-yilgi maqolasi (ijtimoiy tarmoq va yozma nutq) haqida qaysi gap to'g'ri?",
+    o: [
+      "U adabiyotlar tahliliga asoslangan va ijtimoiy tarmoqning ham foydali, ham zararli tomonlarini ko'rsatadi",
+      "U yangi so'rov o'tkazgan va ijtimoiy tarmoq faqat savodxonlikni oshiradi, salbiy ta'siri kuzatilmaydi degan xulosaga kelgan",
+      "U tajriba o'tkazgan va ijtimoiy tarmoq faqat savodxonlikni pasaytiradi, ijobiy ta'siri kuzatilmaydi degan xulosaga kelgan",
+      "U ijtimoiy tarmoq yozma nutqqa umuman ta'sir qilmaydi, chunki til faqat maktabda shakllanadi degan xulosaga kelgan",
+    ],
     a: 0,
-    w: "Olmaning rangini ifodalash uchun 'red' (qizil) sifati to'g'ri keladi.",
+    w: "Maqola yangi so'rov o'tkazmagan: u adabiyotlar va nazariy tahlilga tayanadi. Mualliflar bir tomondan til materiallariga duch kelish, muloqot ko'nikmalari va ijodkorlikni, ikkinchi tomondan rasmiy yozuvning susayishi va grammatik xatolarni ko'rsatadi.",
   },
   // Q5
   {
-    q: 'Find the adjective: "I have a blue car." (Sifatni toping)',
-    o: ["I", "have", "blue", "car"],
-    a: 2,
-    w: "Bu gapda mashinaning rangini bildirgan 'blue' (ko'k) so'zi sifatdir.",
+    q: "Avstraliya universitetlaridagi 25 ta maqolani tahlil qilgan 2026-yilgi sharhga ko'ra, talabalar ijtimoiy tarmoqdan o'qishda nima uchun foydalanadi?",
+    o: [
+      "Faqat dam olish va o'yin-kulgi uchun, o'qishga hech qanday aloqasi bo'lmagan holda",
+      "Guruh ishini boshqarish, resurslarga kirish va tengdoshlar bilan aloqa uchun",
+      "Faqat o'qituvchi bilan rasmiy yozishmalar olib borish va hujjatlar almashish uchun",
+      "Faqat chet tilini o'rganish va dars jadvallarini rasmiy e'lon qilish uchun",
+    ],
+    a: 1,
+    w: "Sharh ijtimoiy tarmoq muloqot, hamkorlik va faollikni oshirishini, ayniqsa onlayn va xalqaro talabalarga foyda berishini ko'rsatadi. Shu bilan birga maxfiylik va axloqiy xavotirlar kabi muammolarni ham sanaydi. Bu Avstraliya misoli.",
   },
   // Q6
   {
-    q: "Complete the sentence: An elephant is very ... (Gapni to'ldiring)",
-    o: ["small", "big", "thin", "short"],
-    a: 1,
-    w: "Filning hajmi juda katta bo'lgani uchun 'big' (katta) sifati mos keladi.",
+    q: "2025-yilda Healthcare jurnalida chop etilgan qamrov sharhiga ko'ra, talabalar ruhiy salomatligiga salbiy ta'sirning muhim omillari sifatida qaysilar doimiy chiqqan?",
+    o: [
+      "FoMO, uyqu sifati va uzoq foydalanish",
+      "Obunachilar va layklar soni",
+      "Faqat o'qish maqsadida va guruh chatlarida foydalanish",
+      "Telefon markasi va internet tezligi",
+    ],
+    a: 0,
+    w: "FoMO — biror narsani o'tkazib yuborish qo'rquvi. Sharh muammoli foydalanish ko'proq ruhiy muammolar bilan bog'liqligini topgan, lekin bu sabab-oqibat isboti emas.",
   },
   // Q7
   {
-    q: "Complete the sentence: Ice is ... (Gapni to'ldiring)",
-    o: ["hot", "warm", "cold", "dry"],
-    a: 2,
-    w: "Muz har doim sovuq bo'ladi, shuning uchun 'cold' (sovuq) sifati to'g'ri.",
-  },
-  // Q8 - TUZATILDI (Izohdagi imlo xatosi to'g'rilandi)
-  {
-    q: "Which group has ONLY colors? (Faqat ranglar guruhini toping)",
+    q: "2025-yilgi meta-tahlil ijtimoiy tarmoqqa qaramlik va talabalar o'zlashtirishi o'rtasida korrelyatsiya −0,172 ekanini topgan. Bu natija nimani anglatadi?",
     o: [
-      "Red, blue, green",
-      "Cat, dog, bird",
-      "One, two, three",
-      "Good, bad, sad",
+      "Ijtimoiy tarmoqdan foydalanish o'zlashtirishni kuchli pasaytirishini va uning sababi ekanini isbotlaydi",
+      "Har qanday foydalanish, hatto qaramlik darajasida ham, o'zlashtirishni yaxshilaydi",
+      "Kichik salbiy bog'liqlik bor, lekin bu sababni isbotlamaydi",
+      "Qaramlik va o'zlashtirish o'rtasida hech qanday bog'liqlik yo'q, natija tasodifiy",
     ],
-    a: 0,
-    w: "Red (qizil), blue (ko'k), green (yashil) — bular sifat guruhiga kiruvchi ranglardir.",
+    a: 2,
+    w: "−0,172 kichik salbiy bog'liqlik (ishonch oralig'i −0,320 dan −0,016 gacha). U odatiy foydalanish haqida emas, aynan qaramlik haqida, va korrelyatsiya sababni isbotlamaydi.",
   },
+  // Q8
+  {
+    q: "Ijtimoiy tarmoqni o'qitishda ishlatish haqidagi 2026-yilgi meta-tahlil haqida qaysi gap to'g'ri?",
+    o: [
+      "U yuzlab tadqiqotga tayanib, ijtimoiy tarmoq o'zlashtirishni sezilarli darajada oshirishini isbotlagan",
+      "U ijtimoiy tarmoq o'zlashtirishni sezilarli darajada pasaytirishini aniq isbotlagan",
+      "U faqat Avstraliya universitetlaridagi tadqiqotlarni qamragan va kuchli ijobiy ta'sir topgan",
+      "Ijobiy ta'sir topmagan, lekin atigi to'rtta tadqiqotga tayanadi, shuning uchun ehtiyotkorlik kerak",
+    ],
+    a: 3,
+    w: "Meta-tahlil to'rtta tadqiqotga tayangan, natijalar bir-biridan keskin farq qilgan va mualliflarning o'zi natijalarga ehtiyotkorlik bilan qarashni tavsiya qilgan.",
+  },
+
+  // ===== 2-QISM: Axloqiy masalalar =====
   // Q9
   {
-    q: "Complete the sentence: This pillow (yostiq) is very ... I can sleep well.",
-    o: ["hard", "soft", "heavy", "cold"],
-    a: 1,
-    w: "Yaxshi uxlash uchun yostiq yumshoq bo'lishi kerak, shuning uchun 'soft' (yumshoq) sifati to'g'ri keladi.",
+    q: "Virginia Shea'ning netiketdagi «insonni unutmang» qoidasi nimani anglatadi?",
+    o: [
+      "Ekran ortida haqiqiy odam o'qiydi, shuning uchun yuziga aytmaydigan gapni yozmang",
+      "Onlayn muloqotda tezlik muhim, shuning uchun o'ylab o'tirmay, darrov va qisqa javob bering",
+      "Internetdagi gaplar hayotdagidan farq qiladi, shuning uchun u yerda qat'iy axloqiy me'yorlar kerak emas",
+      "Anonim akkaunt orqali yozilgan fikr uchun muallif javobgar bo'lmaydi, shuning uchun erkin yozish mumkin",
+    ],
+    a: 0,
+    w: "Shea (Netiquette, 1994): ekran ortida haqiqiy odam o'qiydi. Yuziga aytmaydigan gapni yozmaslik yoki joylamaslik kerak.",
   },
   // Q10
   {
-    q: "Complete the sentence: The sun is ... (Gapni to'ldiring)",
-    o: ["cold", "dark", "hot", "blue"],
-    a: 2,
-    w: "Quyosh issiq bo'lgani uchun 'hot' (issiq) sifati gapni to'g'ri to'ldiradi.",
+    q: "UNICEF ta'rifiga ko'ra, kiberbulling nima?",
+    o: [
+      "Yuzma-yuz sodir bo'ladigan va raqamli texnologiyalarsiz davom etadigan takroriy xatti-harakat, masalan maktab hovlisidagi janjal",
+      "Raqamli texnologiya orqali aytilgan, hech kimni xafa qilish niyati bo'lmagan bir martalik hazil yoki hajviy izoh",
+      "Internetdan boshqa odamning matni, rasmi yoki ishini olib, o'zinikidek ko'rsatib ulashish",
+      "Raqamli texnologiya yordamida qurbonni qo'rqitish, g'azablantirish yoki sharmanda qilishga qaratilgan takroriy xatti-harakat",
+    ],
+    a: 3,
+    w: "UNICEF: kiberbulling raqamli texnologiyalar yordamidagi takrorlanuvchi bulling bo'lib, ijtimoiy tarmoq, messenjer, o'yin platformalari va telefonlarda sodir bo'lishi mumkin. Variant C — plagiatning tavsifi.",
   },
   // Q11
   {
-    q: "Complete the sentence: He has a smile. He is very ...",
-    o: ["sad", "angry", "happy", "tired"],
+    q: "Kiberbullingga duch kelganda UNICEF qaysi harakatlarni maslahat beradi?",
+    o: [
+      "Barcha xabarlarni darhol o'chirib tashlab, hech kimga aytmay, muammo o'z-o'zidan tugashini kutish",
+      "Javoban xuddi shunday haqoratli xabarlar yuborib, o'ch olish va muloqotni shu tarzda davom ettirish",
+      "Ishonchli kishiga aytish, bloklash va shikoyat qilish, xabar va skrinshotlarni dalil sifatida saqlash",
+      "Barcha ijtimoiy tarmoqlardan butunlay chiqib ketib, hech qachon qaytmaslik va hamma hisoblarni o'chirish",
+    ],
     a: 2,
-    w: "Tabassum (smile) baxtli insonlarda bo'ladi, shuning uchun 'happy' (baxtli) to'g'ri javob.",
+    w: "Kiberbulling raqamli iz qoldiradi va bu dalil bo'lishi mumkin. UNICEF internetdan butunlay voz kechishni uzoq muddatli yechim deb hisoblamaydi.",
   },
   // Q12
   {
-    q: "What is the Uzbek meaning of \"The big house\"? (O'zbekcha ma'nosini toping)",
-    o: ["Kichik uy", "Eski bino", "Katta uy", "Yangi uy"],
-    a: 2,
-    w: "'The big house' iborasi o'zbek tilida 'Katta uy' degan ma'noni beradi.",
+    q: "2024-yil noyabrda imzolangan bolalarni zo'ravonlikdan himoya qilish to'g'risidagi qonun haqida qaysi gap to'g'ri?",
+    o: [
+      "U kiberbullingni barcha yoshdagi shaxslar uchun alohida jinoyat deb belgilab, jazoni sezilarli kuchaytirgan",
+      "Zo'ravonlik shakllari uchtadan oltitaga kengaygan va bulling, jumladan kiberbulling, kiritilgan",
+      "U faqat jismoniy zo'ravonlikni tan oladi, onlayn va psixologik zo'ravonlikni esa umuman qamramaydi",
+      "U faqat maktab hovlisidagi, yuzma-yuz bullingni tartibga soladi va internetdagi holatlarga tegmaydi",
+    ],
+    a: 1,
+    w: "Qonun zo'ravonlik shakllarini oltitaga kengaytirgan; bulling tengdoshlar tomonidan jismoniy, og'zaki yoki psixologik zarar yetkazish bo'lib, kiberbullingni ham o'z ichiga oladi. Qonun bolalar, ya'ni 18 yoshgacha bo'lganlar uchun.",
   },
-  // Q13 - TUZATILDI ("Daftar qiziqarli" varianti "Daftar eski" so'ziga almashtirildi, mantiqiy chalkashlik ketdi)
+  // Q13
   {
-    q: "What is the Uzbek meaning of \"The book is interesting\"? (O'zbekcha ma'nosini toping)",
-    o: ["Kitob qiziqarli", "Kitob yangi", "Kitob qalin", "Daftar eski"],
-    a: 0,
-    w: "'Interesting' qiziqarli degani, shuning uchun gap 'Kitob qiziqarli' bo'ladi.",
+    q: "O'zbekistonda kattalar uchun kiberbulling bo'yicha huquqiy holat haqida qaysi gap to'g'ri?",
+    o: [
+      "«Kiberbulling» nomli alohida jinoyat moddasi bor va u internetdagi barcha haqorat va tuhmatni qamrab oladi",
+      "Internetdagi haqorat va tuhmat uchun hech qanday ma'muriy yoki jinoiy javobgarlik belgilanmagan",
+      "«Kiberbulling» nomli alohida norma yo'q, lekin haqorat va tuhmat uchun javobgarlik bor",
+      "Faqat 18 yoshgacha bo'lganlar javobgarlikka tortiladi, kattalar esa hech qanday javobgar bo'lmaydi",
+    ],
+    a: 2,
+    w: "Times of Central Asia: «kiberbulling» nomli alohida norma yo'q. Haqorat va tuhmat uchun esa javobgarlik bor: Oliy sud ma'lumotiga ko'ra, 2024-yilning dastlabki o'n oyida 30 mingdan ortiq kishi javobgarlikka tortilgan (bu faqat internetdagi emas, barcha ishlar).",
   },
   // Q14
   {
-    q: "Complete the sentence: This tea is very ... I cannot drink it.",
-    o: ["cold", "green", "hot", "sweet"],
-    a: 2,
-    w: "Choy juda issiq bo'lgani uchun uni ichib bo'lmaydi, shuning uchun 'hot' (issiq) to'g'ri javob.",
+    q: "2018-yilda Science jurnalida chop etilgan MIT tadqiqotiga ko'ra, yolg'on xabarlarni haqiqiylardan ko'proq kim tarqatgan va tadqiqot qaysi tarmoqda o'tkazilgan?",
+    o: [
+      "Odamlar, botlar emas; tadqiqot Twitter'da o'tkazilgan",
+      "Botlar, odamlar emas; tadqiqot Twitter'da o'tkazilgan",
+      "Odamlar, botlar emas; tadqiqot Instagram'da o'tkazilgan",
+      "Botlar, odamlar emas; tadqiqot Telegram'da o'tkazilgan",
+    ],
+    a: 0,
+    w: "Yolg'on xabarlarning qayta ulashilish ehtimoli 70 foiz yuqori bo'lgan va uni asosan odamlar tarqatgan. Tadqiqot faqat Twitter'da, faktchek qilingan xabarlar bilan o'tkazilgan, shuning uchun natijani boshqa tarmoqlarga to'g'ridan-to'g'ri umumlashtirib bo'lmaydi.",
   },
   // Q15
   {
-    q: "Complete the sentence: A rabbit runs very ...",
-    o: ["sad", "fast", "heavy", "old"],
+    q: "2019-yilda qabul qilingan «Shaxsiy ma'lumotlar to'g'risida»gi qonunning asosiy talablaridan biri qaysi?",
+    o: [
+      "Ma'lumotni qayta ishlashni egasining roziligisiz ham, istalgan maqsadda va cheksiz muddat davom ettirish",
+      "Qayta ishlash uchun ma'lumot egasining roziligi va maqsadlarning belgilanishi",
+      "Barcha shaxsiy ma'lumotlarni, egasining xohishidan qat'i nazar, hamma uchun ochiq e'lon qilish",
+      "Ma'lumot uchinchi shaxsga berilganini egasidan yashirish va uni hech qachon xabardor qilmaslik",
+    ],
     a: 1,
-    w: "Quyon juda tez yuguradi, shuning uchun harakatga nisbatan 'fast' (tez) sifati to'g'ri keladi.",
+    w: "Qonun ma'lumot egasining roziligi, qayta ishlash maqsadlari va uchinchi shaxsga berishda ma'lumot egasini xabardor qilish talablarini belgilaydi.",
+  },
+  // Q16
+  {
+    q: "Mualliflik huquqiga oid 2025-yil noyabrdan kuchga kirgan o'zgartirishlar haqida huquqiy firmalar xabariga ko'ra, qaysi gap to'g'ri?",
+    o: [
+      "Qalbaki nusxalarni ko'paytirish va tarqatish hech qanday holatda javobgarlik keltirmaydi, chunki bu faqat axloqiy masala",
+      "Manba ko'rsatilgan bo'lsa ham, har qanday iqtibos keltirish jinoyat hisoblanadi va qamoq bilan jazolanadi",
+      "Faqat ma'muriy jarima belgilangan, jinoiy javobgarlik esa umuman nazarda tutilmagan",
+      "Zarar yetkazilsa jinoiy javobgarlik bor, lekin birinchi marta sodir etilib zarar 30 kunda qoplansa, ozod qilish mumkin",
+    ],
+    a: 3,
+    w: "Xabarlarga ko'ra, asarlarning qalbaki nusxalarini ko'paytirish va tarqatish, agar zarar yetkazilsa, jinoiy javobgarlik keltiradi. Birinchi marta sodir etilib, zarar aniqlangandan keyin 30 kun ichida to'liq qoplansa, shaxs javobgarlikdan ozod qilinadi. Amaldagi matnni lex.uz'dan tekshiring.",
   },
 ];
